@@ -1,0 +1,53 @@
+{
+  "name": "cborkit",
+  "version": "0.0.0",
+  "type": "module",
+  "author": "Lukas Heizmann <lukas@heizmann.dev>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lkwr/cborkit.git"
+  },
+  "homepage": "https://github.com/lkwr/cborkit",
+  "bugs": {
+    "url": "https://github.com/lkwr/cborkit/issues"
+  },
+  "keywords": [
+    "cbor",
+    "rfc7049",
+    "rfc8949"
+  ],
+  "scripts": {
+    "build": "bun run ./build.ts",
+    "bench": "bun run ./benchmark/bench.ts",
+    "fmt": "bun prettier --write .",
+    "check": "bun prettier --check .",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "@types/bun": "^1.2.5",
+    "cbor-x": "^1.6.0",
+    "cbor2": "^1.12.0",
+    "cborg": "^4.2.9",
+    "prettier": "^3.5.3",
+    "tinybench": "^3.1.1",
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.2"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./codec": "./src/codec/codec.ts",
+    "./decoder": "./src/decoding/decoder.ts",
+    "./decoder/default": "./src/decoding/default.ts",
+    "./reader": "./src/decoding/reader.ts",
+    "./encoder": "./src/encoding/encoder.ts",
+    "./encoder/default": "./src/encoding/default.ts",
+    "./plugins/class_transformer": "./src/plugins/class_transformer.ts",
+    "./plugins/map": "./src/plugins/map.ts",
+    "./writer": "./src/encoding/writer.ts",
+    "./simple": "./src/simple.ts",
+    "./tagged": "./src/tagged.ts",
+    "./tags": "./src/tags/index.ts"
+  }
+}
