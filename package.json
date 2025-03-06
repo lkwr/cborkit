@@ -1,0 +1,34 @@
+{
+  "name": "supercbor",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "bun run ./build.ts",
+    "bench": "bun run ./benchmark/bench.ts",
+    "fmt": "bun prettier --write .",
+    "check": "bun prettier --check .",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "@types/bun": "^1.2.4",
+    "cbor-x": "^1.6.0",
+    "cbor2": "^1.12.0",
+    "cborg": "^4.2.8",
+    "prettier": "^3.5.3",
+    "tinybench": "^3.1.1",
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.2"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./encoder": "./src/encoding/encoder.ts",
+    "./encoder/default": "./src/encoding/default.ts",
+    "./writer": "./src/encoding/writer.ts",
+    "./decoder": "./src/decoding/decoder.ts",
+    "./decoder/default": "./src/decoding/default.ts",
+    "./reader": "./src/decoding/reader.ts",
+    "./tagged": "./src/tagged.ts",
+    "./simple": "./src/simple.ts"
+  }
+}
