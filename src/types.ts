@@ -1,5 +1,5 @@
 export const MajorType = {
-  // major 0: positive integer (unsigned)
+  // major 0: positive integer
   PosInt: 0,
   // major 1: negative integer
   NegInt: 1,
@@ -29,17 +29,7 @@ export type CborHeader = {
   itemLength: number | null;
 };
 
-// TODO use cbor type as an bridge type between cbor and javascript (reader/writer uses this type)
-// decoder/encoder translate javascrpt types to this bridge type and use reader/writer
-export type CborType =
-  | "int"
-  | "bytes"
-  | "text"
-  | "array"
-  | "map"
-  | "tag"
-  | "simple"
-  | "float";
+export type CborType = CborItem["type"];
 
 export type CborItem =
   | CborInt
