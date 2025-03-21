@@ -198,10 +198,21 @@ const readInt = (header: CborHeader): WithLength<CborInt> => {
     throw new Error("Indefinite length currently not supported");
 
   const isPositive = header.major !== MajorType.NegInt;
+  const unsignedInt =
+    header.shortCount < 24 ? header.shortCount : header.extendedCount;
+
+  if (unsignedInt === undefined) throw new Error("Invalid cbor header");
 
   return {
     type: "int",
-    value: isPositive ? header.itemLength : -header.itemLength,
+    value:
+      typeof unsignedInt === "bigint"
+        ? isPositive
+          ? unsignedInt
+          : -unsignedInt - 1n
+        : isPositive
+          ? unsignedInt
+          : -unsignedInt - 1,
     length: header.headerLength,
   };
 };

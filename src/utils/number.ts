@@ -25,12 +25,14 @@ export const readUint16 = (bytes: Uint8Array, offset: number): number => {
 };
 
 export const readUint32 = (bytes: Uint8Array, offset: number): number => {
-  return (
+  const signedInt =
     (bytes[offset] << 24) |
     (bytes[offset + 1] << 16) |
     (bytes[offset + 2] << 8) |
-    bytes[offset + 3]
-  );
+    bytes[offset + 3];
+
+  // convert to unsigned
+  return signedInt >>> 0;
 };
 
 export const readBigUint64 = (bytes: Uint8Array, offset: number): bigint => {

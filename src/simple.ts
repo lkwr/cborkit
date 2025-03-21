@@ -18,4 +18,8 @@ export class Simple {
   static boolean(value: boolean) {
     return value ? Simple.true : Simple.false;
   }
+
+  static from(value: number | bigint) {
+    return new Simple(value);
+  }
 }

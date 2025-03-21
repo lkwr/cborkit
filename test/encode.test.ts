@@ -430,6 +430,18 @@ describe("encode", () => {
     // simple 1
     expect(encode(new Simple(1))).toEqual(new Uint8Array([0xe1]));
 
+    // simple 20 - false
+    expect(encode(false)).toEqual(new Uint8Array([0xf4]));
+
+    // simple 21 - true
+    expect(encode(true)).toEqual(new Uint8Array([0xf5]));
+
+    // simple 22 - null
+    expect(encode(null)).toEqual(new Uint8Array([0xf6]));
+
+    // simple 23 - undefined
+    expect(encode(undefined)).toEqual(new Uint8Array([0xf7]));
+
     // simple 23
     expect(encode(new Simple(23))).toEqual(new Uint8Array([0xf7]));
 
