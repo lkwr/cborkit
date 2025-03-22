@@ -14,6 +14,7 @@ import type {
 } from "../types.ts";
 import {
   FLOAT_16_SUPPORTED,
+  asInt,
   readBigUint64,
   readFloat16,
   readFloat32,
@@ -21,8 +22,8 @@ import {
   readUint8,
   readUint16,
   readUint32,
+  tryInt,
 } from "../utils/number.ts";
-import { asInt, tryInt } from "../utils/utils.ts";
 import { Writer } from "../utils/writer.ts";
 
 const textDecoder = new TextDecoder();

@@ -1,4 +1,5 @@
 import type { CborItem, CborType } from "../types.ts";
+import { defaultDecoder } from "./default.ts";
 import { read } from "./reader.ts";
 
 export type DecoderFn<T extends CborItem = CborItem> = (
@@ -17,7 +18,7 @@ export type DecodeOptions = {
 
 export const decode = (bytes: Uint8Array, options?: DecodeOptions): unknown => {
   const item = read(bytes);
-  const decoders = options?.decoders ?? [];
+  const decoders = options?.decoders ?? [defaultDecoder];
 
   const value = walkDecoders(item, item, 0, decoders);
 

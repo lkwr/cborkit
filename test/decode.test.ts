@@ -1,19 +1,11 @@
 import { describe, expect, test } from "bun:test";
 
-import { decode as emptyDecode } from "../src/decoding/decoder.ts";
-import { defaultDecoder } from "../src/decoding/default.ts";
-import { defaultEncoder } from "../src/encoding/default.ts";
-import { encode as emptyEncode } from "../src/encoding/encoder.ts";
+import { decode } from "../src/decoding/decoder.ts";
+import { encode } from "../src/encoding/encoder.ts";
 import { Simple } from "../src/simple.ts";
 import { Tagged } from "../src/tagged.ts";
 import { FLOAT_16_SUPPORTED } from "../src/utils/number.ts";
 import { bytes } from "./utils.ts";
-
-const decode = (value: Uint8Array): unknown =>
-  emptyDecode(value, { decoders: [defaultDecoder] });
-
-const encode = (value: unknown): Uint8Array =>
-  emptyEncode(value, { encoders: [defaultEncoder] });
 
 describe("decode", () => {
   test("major 0 - positive integers", () => {
@@ -74,6 +66,11 @@ describe("decode", () => {
   });
 
   test("major 2 - bytes", () => {
+    // length indefinite
+    expect(
+      decode(bytes(0x5f, 0x42, 0x01, 0x02, 0x43, 0x03, 0x04, 0x05, 0xff)),
+    ).toEqual(bytes(0x01, 0x02, 0x03, 0x04, 0x05));
+
     // length 0
     expect(decode(bytes(0x40))).toEqual(bytes());
 
@@ -121,6 +118,11 @@ describe("decode", () => {
   });
 
   test("major 3 - text", () => {
+    // length indefinite
+    expect(
+      decode(bytes(0x7f, 0x62, 0x31, 0x32, 0x63, 0x33, 0x34, 0x35, 0xff)),
+    ).toEqual("12345");
+
     // length 0
     expect(decode(bytes(0x60))).toEqual("");
 
@@ -205,6 +207,11 @@ describe("decode", () => {
   });
 
   test("major 4 - array", () => {
+    // length indefinite
+    expect(decode(bytes(0x9f, 0x00, 0x01, 0x02, 0x03, 0x04, 0xff))).toEqual([
+      0x00, 0x01, 0x02, 0x03, 0x04,
+    ]);
+
     // length 0
     expect(decode(bytes(0x80))).toEqual([]);
 
@@ -246,6 +253,11 @@ describe("decode", () => {
   });
 
   test("major 5 - map", () => {
+    // length indefinite
+    expect(
+      decode(bytes(0xbf, 0x61, 0x61, 0x00, 0x61, 0x62, 0x01, 0xff)),
+    ).toEqual({ a: 0, b: 1 });
+
     // length 0
     expect(decode(bytes(0xa0))).toEqual({});
 
@@ -373,7 +385,6 @@ describe("decode", () => {
     // skip rest because it's too big
   });
 
-  // TODO test major 6 - tag
   test("major 6 - tag", () => {
     // tag 0
     expect(decode(bytes(0xc0, 0x00))).toEqual(Tagged.from(0, 0));

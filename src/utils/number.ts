@@ -1,8 +1,12 @@
-/**
- * As float16 is not supported in all runtimes, we need to check if it is supported before using it.
- *
- * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView/setFloat16#browser_compatibility
- */
+// -----------------------------------------------------------------------------
+//                                    FLOAT16
+// -----------------------------------------------------------------------------
+//
+// As float16 is not supported in all runtimes, we need to check if it is
+// supported before using it.
+//
+// @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView/setFloat16#browser_compatibility
+//
 
 export type DataViewFloat16 = DataView & {
   setFloat16(byteOffset: number, value: number): void;
@@ -135,4 +139,32 @@ export const writeFloat64 = (
 ) => {
   const view = new DataView(bytes.buffer);
   view.setFloat64(offset, value);
+};
+
+// -----------------------------------------------------------------------------
+//                                    CASTING
+// -----------------------------------------------------------------------------
+
+export const asBigInt = (value: number | bigint): bigint => {
+  if (typeof value === "number") return BigInt(asInt(value));
+  return value;
+};
+
+export const asInt = (value: number | bigint): number => {
+  if (typeof value === "bigint") value = Number(value);
+
+  if (!Number.isSafeInteger(value))
+    throw new Error("value must be a safe integer");
+
+  if (Number.isNaN(value)) throw new Error("value must be a number");
+
+  return value;
+};
+
+export const tryInt = (value: number | bigint): number | bigint => {
+  try {
+    return asInt(value);
+  } catch {
+    return value;
+  }
 };

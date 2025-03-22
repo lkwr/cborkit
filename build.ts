@@ -46,6 +46,7 @@ const exports = Object.fromEntries(
 const distPackageJson = {
   ...packageJson,
   exports,
+  scripts: undefined,
   devDependencies: undefined,
 };
 

@@ -1,7 +1,22 @@
 {
-  "name": "supercbor",
+  "name": "cborkit",
   "version": "0.0.0",
   "type": "module",
+  "author": "Lukas Heizmann <lukas@heizmann.dev>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lkwr/cborkit.git"
+  },
+  "homepage": "https://github.com/lkwr/cborkit",
+  "bugs": {
+    "url": "https://github.com/lkwr/cborkit/issues"
+  },
+  "keywords": [
+    "cbor",
+    "rfc7049",
+    "rfc8949"
+  ],
   "scripts": {
     "build": "bun run ./build.ts",
     "bench": "bun run ./benchmark/bench.ts",

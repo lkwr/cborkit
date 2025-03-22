@@ -1,5 +1,6 @@
 import type { CborItem } from "../types.ts";
 import { Writer } from "../utils/writer.ts";
+import { defaultEncoder } from "./default.ts";
 import { NoEncoderError } from "./errors.ts";
 import { write } from "./writer.ts";
 
@@ -31,7 +32,7 @@ export type EncodeOptions = {
 
 export const encode = (value: unknown, options?: EncodeOptions): Uint8Array => {
   const byteArray = options?.writer ?? new Writer();
-  const encoders = options?.encoders ?? [];
+  const encoders = options?.encoders ?? [defaultEncoder];
 
   const item = walkEncoders(value, typeof value, null, 0, encoders);
   write(item, byteArray);

@@ -1,8 +1,0 @@
-- Custom errors for all cases
-- Float16 thing
-- Utilities
-  - Codec with convinient tag management
-  - Encoder and decoder generators for tags
-    - Like `{ type: number, fn: (data) => wantedObject }`
-- Tests
-- remove dataview as this is slow
