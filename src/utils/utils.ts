@@ -13,3 +13,11 @@ export const asInt = (value: number | bigint): number => {
 
   return value;
 };
+
+export const tryInt = (value: number | bigint): number | bigint => {
+  try {
+    return asInt(value);
+  } catch {
+    return value;
+  }
+};

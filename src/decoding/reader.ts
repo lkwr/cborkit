@@ -22,6 +22,7 @@ import {
   readUint16,
   readUint32,
 } from "../utils/number.ts";
+import { asInt, tryInt } from "../utils/utils.ts";
 import { Writer } from "../utils/writer.ts";
 
 const textDecoder = new TextDecoder();
@@ -92,7 +93,7 @@ export const readHeader = (
       shortCount,
       extendedCount,
       headerLength: 9,
-      itemLength: Number(extendedCount),
+      itemLength: tryInt(extendedCount),
     };
   } else if (shortCount === 31) {
     return {
@@ -256,7 +257,7 @@ const readString = (
         };
   }
 
-  const end = start + header.itemLength;
+  const end = start + asInt(header.itemLength);
   const slice = bytes.slice(start, end);
   const length = end - offset;
 
@@ -291,10 +292,11 @@ const readArray = (
     };
   }
 
+  const itemLength = asInt(header.itemLength);
   const currentValue: Array<WithLength<CborItem>> = [];
   let currentLength = 0;
 
-  for (let i = 0; i < header.itemLength; i++) {
+  for (let i = 0; i < itemLength; i++) {
     const result = read(bytes, {
       offset: start + currentLength,
     });
@@ -334,10 +336,11 @@ const readMap = (
     };
   }
 
+  const itemLength = asInt(header.itemLength);
   const currentValue: Array<[WithLength<CborItem>, WithLength<CborItem>]> = [];
   let currentLength = 0;
 
-  for (let i = 0; i < header.itemLength; i++) {
+  for (let i = 0; i < itemLength; i++) {
     const key = read(bytes, {
       offset: start + currentLength,
     });

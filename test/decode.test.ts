@@ -2,12 +2,18 @@ import { describe, expect, test } from "bun:test";
 
 import { decode as emptyDecode } from "../src/decoding/decoder.ts";
 import { defaultDecoder } from "../src/decoding/default.ts";
+import { defaultEncoder } from "../src/encoding/default.ts";
+import { encode as emptyEncode } from "../src/encoding/encoder.ts";
 import { Simple } from "../src/simple.ts";
+import { Tagged } from "../src/tagged.ts";
 import { FLOAT_16_SUPPORTED } from "../src/utils/number.ts";
 import { bytes } from "./utils.ts";
 
-const decode = (value: Uint8Array) =>
+const decode = (value: Uint8Array): unknown =>
   emptyDecode(value, { decoders: [defaultDecoder] });
+
+const encode = (value: unknown): Uint8Array =>
+  emptyEncode(value, { encoders: [defaultEncoder] });
 
 describe("decode", () => {
   test("major 0 - positive integers", () => {
@@ -198,11 +204,220 @@ describe("decode", () => {
     // skip rest because it's too big
   });
 
-  // TODO test major 4 - array
+  test("major 4 - array", () => {
+    // length 0
+    expect(decode(bytes(0x80))).toEqual([]);
 
-  // TODO test major 5 - map
+    // length 1
+    expect(decode(bytes(0x81, 0x00))).toEqual([0x00]);
+
+    // length 2
+    expect(decode(bytes(0x82, 0x01, 0x00))).toEqual([0x01, 0x00]);
+
+    // length 23
+    expect(decode(bytes(0x97, ...Array(23)))).toEqual(Array(23).fill(0x00));
+
+    // length 24 (uint8)
+    expect(decode(bytes(0x98, 0x18, ...Array(24)))).toEqual(
+      Array(24).fill(0x00),
+    );
+
+    // length 255 (uint8)
+    expect(decode(bytes(0x98, 0xff, ...Array(255)))).toEqual(
+      Array(255).fill(0x00),
+    );
+
+    // length 256 (uint16)
+    expect(decode(bytes(0x99, 0x01, 0x00, ...Array(256)))).toEqual(
+      Array(256).fill(0x00),
+    );
+
+    // length 65535 (uint16)
+    expect(decode(bytes(0x99, 0xff, 0xff, ...Array(65535)))).toEqual(
+      Array(65535).fill(0x00),
+    );
+
+    // length 65536 (uint32)
+    expect(
+      decode(bytes(0x9a, 0x00, 0x01, 0x00, 0x00, ...Array(65536))),
+    ).toEqual(Array(65536).fill(0x00));
+
+    // skip rest because it's too big
+  });
+
+  test("major 5 - map", () => {
+    // length 0
+    expect(decode(bytes(0xa0))).toEqual({});
+
+    // length 1
+    expect(decode(bytes(0xa1, 0x61, 0x61, 0x00))).toEqual({ a: 0 });
+
+    // length 23
+    expect(
+      decode(
+        bytes(
+          0xb7,
+          ...Array(23)
+            .fill(0x00)
+            .flatMap((_, i) => [...encode(i.toString()), 0x00]),
+        ),
+      ),
+    ).toEqual(
+      Object.fromEntries(
+        Array(23)
+          .fill(0)
+          .map((_, i) => [i, 0]),
+      ),
+    );
+
+    // length 24 (uint8)
+    expect(
+      decode(
+        bytes(
+          0xb8,
+          0x18,
+          ...Array(24)
+            .fill(0x00)
+            .flatMap((_, i) => [...encode(i.toString()), 0x00]),
+        ),
+      ),
+    ).toEqual(
+      Object.fromEntries(
+        Array(24)
+          .fill(0)
+          .map((_, i) => [i, 0]),
+      ),
+    );
+
+    // length 255 (uint8)
+    expect(
+      decode(
+        bytes(
+          0xb8,
+          0xff,
+          ...Array(255)
+            .fill(0x00)
+            .flatMap((_, i) => [...encode(i.toString()), 0x00]),
+        ),
+      ),
+    ).toEqual(
+      Object.fromEntries(
+        Array(255)
+          .fill(0)
+          .map((_, i) => [i, 0]),
+      ),
+    );
+
+    // length 256 (uint16)
+    expect(
+      decode(
+        bytes(
+          0xb9,
+          0x01,
+          0x00,
+          ...Array(256)
+            .fill(0x00)
+            .flatMap((_, i) => [...encode(i.toString()), 0x00]),
+        ),
+      ),
+    ).toEqual(
+      Object.fromEntries(
+        Array(256)
+          .fill(0)
+          .map((_, i) => [i, 0]),
+      ),
+    );
+
+    // length 65535 (uint16)
+    expect(
+      decode(
+        bytes(
+          0xb9,
+          0xff,
+          0xff,
+          ...Array(65535)
+            .fill(0x00)
+            .flatMap((_, i) => [...encode(i.toString()), 0x00]),
+        ),
+      ),
+    ).toEqual(
+      Object.fromEntries(
+        Array(65535)
+          .fill(0)
+          .map((_, i) => [i, 0]),
+      ),
+    );
+
+    // length 65536 (uint32)
+    expect(
+      decode(
+        bytes(
+          0xba,
+          0x00,
+          0x01,
+          0x00,
+          0x00,
+          ...Array(65536)
+            .fill(0x00)
+            .flatMap((_, i) => [...encode(i.toString()), 0x00]),
+        ),
+      ),
+    ).toEqual(
+      Object.fromEntries(
+        Array(65536)
+          .fill(0)
+          .map((_, i) => [i, 0]),
+      ),
+    );
+
+    // skip rest because it's too big
+  });
 
   // TODO test major 6 - tag
+  test("major 6 - tag", () => {
+    // tag 0
+    expect(decode(bytes(0xc0, 0x00))).toEqual(Tagged.from(0, 0));
+
+    // tag 1
+    expect(decode(bytes(0xc1, 0x00))).toEqual(Tagged.from(1, 0));
+
+    // tag 23
+    expect(decode(bytes(0xd7, 0x00))).toEqual(Tagged.from(23, 0));
+
+    // tag 24 (uint8)
+    expect(decode(bytes(0xd8, 0x18, 0x00))).toEqual(Tagged.from(24, 0));
+
+    // tag 255 (uint8)
+    expect(decode(bytes(0xd8, 0xff, 0x00))).toEqual(Tagged.from(255, 0));
+
+    // tag 256 (uint16)
+    expect(decode(bytes(0xd9, 0x01, 0x00, 0x00))).toEqual(Tagged.from(256, 0));
+
+    // tag 65535 (uint16)
+    expect(decode(bytes(0xd9, 0xff, 0xff, 0x00))).toEqual(
+      Tagged.from(65535, 0),
+    );
+
+    // tag 65536 (uint32)
+    expect(decode(bytes(0xda, 0x00, 0x01, 0x00, 0x00, 0x00))).toEqual(
+      Tagged.from(65536, 0),
+    );
+
+    // tag 4294967295 (uint32)
+    expect(decode(bytes(0xda, 0xff, 0xff, 0xff, 0xff, 0x00))).toEqual(
+      Tagged.from(4294967295, 0),
+    );
+
+    // tag 4294967296 (uint64)
+    expect(
+      decode(bytes(0xdb, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00)),
+    ).toEqual(Tagged.from(4294967296, 0));
+
+    // tag 18446744073709551615n (uint64)
+    expect(
+      decode(bytes(0xdb, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff)),
+    ).toEqual(Tagged.from(18446744073709551615n, 0));
+  });
 
   test("major 7 - simple", () => {
     // simple 0

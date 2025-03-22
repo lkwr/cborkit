@@ -5,7 +5,7 @@
       "name": "cbor",
       "devDependencies": {
         "@trivago/prettier-plugin-sort-imports": "^5.2.2",
-        "@types/bun": "^1.2.4",
+        "@types/bun": "^1.2.5",
         "cbor-x": "^1.6.0",
         "cbor2": "^1.12.0",
         "cborg": "^4.2.8",
@@ -179,7 +179,7 @@
 
     "cbor2": ["cbor2@1.12.0", "", {}, "sha512-3Cco8XQhi27DogSp9Ri6LYNZLi/TBY/JVnDe+mj06NkBjW/ZYOtekaEU4wZ4xcRMNrFkDv8KNtOAqHyDfz3lYg=="],
 
-    "cborg": ["cborg@4.2.8", "", { "bin": { "cborg": "lib/bin.js" } }, "sha512-z9M+TZCWQbf89Gl8ulpYThM9fqmkjBDdMiq+wS72OAK2zqDaXNquoAWFDrAKHQAukVtPspmadB9chuFC0ut7ew=="],
+    "cborg": ["cborg@4.2.9", "", { "bin": { "cborg": "lib/bin.js" } }, "sha512-HG8GprGhfzkbzDAIQApqYcN1BJAyf8vDQbzclAwaqrm3ATFnB7ygiWLr+YID+GBdfTJ+yHtzPi06218xULpZrg=="],
 
     "chokidar": ["chokidar@4.0.3", "", { "dependencies": { "readdirp": "^4.0.1" } }, "sha512-Qgzu8kfBvo+cA4962jnP1KkS6Dop5NS6g7R5LFYJr4b8Ub94PPQXUksCw9PvXoeXPRRddRNC5C1JQUR2SMGtnA=="],
 

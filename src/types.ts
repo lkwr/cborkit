@@ -26,7 +26,7 @@ export type CborHeader = {
   extendedCount?: number | bigint;
 
   headerLength: number;
-  itemLength: number | null;
+  itemLength: bigint | number | null;
 };
 
 export type CborType = CborItem["type"];
