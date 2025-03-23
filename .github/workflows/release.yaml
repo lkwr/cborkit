@@ -29,9 +29,14 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           manifest-file: .release-manifest.json
           config-file: release.json
+      - name: Setup NPM
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+          npm config set registry=https://registry.npmjs.org/
       - name: Publish to npm
         if: ${{ steps.release.outputs.release_created }}
-        run: npm publish --access public --provenance
         working-directory: dist
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --provenance
